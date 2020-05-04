@@ -91,7 +91,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            resolve('${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry');
+            resolve(`${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry`);
         });
     }
 
@@ -119,7 +119,7 @@ class Blockchain {
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
             if (currentTime - t < 300) {
                 if (bitcoinMessage.verify(message, address, signature)) {
-                    let block = self._addBlock(new Block({owner: address, data: star}));
+                    let block = self._addBlock(new BlockClass.Block({owner: address, data: star}));
                     resolve(block);
                 } else {
                     reject('verification failed');
@@ -180,13 +180,19 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            self.chain.forEach((block) => {
-                if (block.getBData().owner === address) {
-                    stars.push(block.getBData())
+            for (let block of self.chain) {
+                block.getBData().then((result) => {
+                    if (result && result.owner === address) {
+                        stars.push(result);
+                    }
                 }
-            }
 
-            );
+                );
+                
+            }
+            
+            
+            resolve(stars);
         });
     }
 

@@ -77,7 +77,7 @@ class Block {
             if (self.height > 0) {
                 resolve(output);
             } else {
-                reject('Error: Can\'t return data of Gnesis Block');
+                resolve(null);
             }
         });
 
